@@ -45,10 +45,28 @@ export const TransactionsList = () => {
       type: "deposit",
       date: new Date(),
     },
+    {
+      id: "4",
+      amount: 100,
+      type: "withdrawal",
+      date: new Date(),
+    },
+    {
+      id: "5",
+      amount: 100,
+      type: "deposit",
+      date: new Date(),
+    },
+    {
+      id: "6",
+      amount: 100,
+      type: "withdrawal",
+      date: new Date(),
+    },
   ];
 
   return (
-    <div className="w-full space-y-2 h-44">
+    <div className="w-full space-y-2">
       {transactions.map((transaction) => transactionToListItem(transaction))}
     </div>
   );

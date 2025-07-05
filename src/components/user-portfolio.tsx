@@ -7,20 +7,21 @@ export const UserPortfolio = () => {
   const currentApr = 0.123492792798272;
 
   return (
-    <div className="flex flex-col w-full bg-blue-500/20 p-4 rounded-2xl ">
-      <Typography variant="number" level={2}>
-        {formatNumber(totalUsd)}
-      </Typography>
-      <div className="flex justify-between gap-2 items-center mt-4 mb-2">
-        <Typography variant="subtitle">Earnings</Typography>
-        <Typography variant="number" level={4} className="text-green-primary">
-          +{formatNumber(generatedRewards)}
+    <div className="flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-blue-700/15 p-5 rounded-2xl aspect-[86/50]">
+      <div className="w-full">
+        <Typography variant="number" level={2}>
+          {formatNumber(totalUsd)}
         </Typography>
+        <div className="flex gap-2 items-center mt-2">
+          <Typography variant="subtitle" level={3}>
+            Net APR – {formatNumber(currentApr, { style: "percent" })}
+          </Typography>
+        </div>
       </div>
-      <div className="flex justify-between gap-2 items-center">
-        <Typography variant="subtitle">Net APR</Typography>
-        <Typography variant="number" level={4}>
-          {formatNumber(currentApr, { style: "percent" })}
+      <div className="flex justify-between gap-2 items-center mt-4">
+        <Typography variant="subtitle">Earnings</Typography>
+        <Typography variant="number" level={4} className="text-green-600">
+          +{formatNumber(generatedRewards)}
         </Typography>
       </div>
     </div>

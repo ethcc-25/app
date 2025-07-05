@@ -10,3 +10,5 @@ export type FormattingOptions = {
   currency?: string;
   style?: "currency" | "decimal" | "percent";
 };
+
+export type ButtonState = "pending" | "success" | "failed" | undefined;
