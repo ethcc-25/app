@@ -1,17 +1,17 @@
 import { API_ROOT } from "@/constants/api";
-import type { ApiResponse, BestOpportunityData } from "@/types";
+import type { Opportunity } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
-const fetchBestOpportunity = async (): Promise<
-  ApiResponse<BestOpportunityData>
-> => {
+const fetchBestOpportunity = async (): Promise<Opportunity> => {
   const response = await fetch(`${API_ROOT}/best-opportunity`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch best opportunity");
   }
 
-  return response.json();
+  const { data } = await response.json();
+
+  return data;
 };
 
 export const useBestOpportunity = () => {

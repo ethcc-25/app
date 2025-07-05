@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import BestOpportunity from "@/components/BestOpportunity";
 import { Page } from "@/components/PageLayout";
 import { TransactionsList } from "@/components/transactions-list";
 import { UserActions } from "@/components/user-actions";
@@ -24,7 +23,6 @@ export default async function Home() {
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
         <UserPortfolio />
         <UserActions />
-        <BestOpportunity />
         <TransactionsList />
       </Page.Main>
     </>

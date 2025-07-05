@@ -16,9 +16,9 @@ export type FormattingOptions = {
 export type ButtonState = "pending" | "success" | "failed" | undefined;
 
 export enum SupportedProtocol {
-  FLUID = 0,
   AAVE = 1,
   MORPHO = 2,
+  FLUID = 3,
 }
 
 export enum SupportedChainDomain {
@@ -60,4 +60,12 @@ export type UserPosition = {
   protocol: SupportedProtocol;
   amount: number;
   apr: number;
+};
+
+export type Opportunity = {
+  chainId: number;
+  protocol: SupportedProtocol;
+  apy: number;
+  poolName: string;
+  poolAddress: string;
 };
