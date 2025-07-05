@@ -284,6 +284,26 @@
   {
     "inputs": [
       {
+        "internalType": "uint8",
+        "name": "pool",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint32",
+        "name": "chaindId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "address",
+        "name": "yieldManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      },
+      {
         "components": [
           {
             "components": [

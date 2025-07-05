@@ -21,6 +21,13 @@ export enum SupportedProtocol {
   MORPHO = 2,
 }
 
+export enum SupportedChainDomain {
+  ETHEREUM = 0,
+  OPTIMISM = 2,
+  ARBITRUM = 3,
+  BASE = 6,
+}
+
 export type MondeToken = {
   symbol: string;
   name: string;
@@ -40,11 +47,12 @@ export type BestOpportunityData = {
   tokens: MondeToken[];
 };
 
-export type ApiResponse<T> = {
+export interface ApiResponse<T> {
   success: boolean;
-  data: T;
+  data?: T;
+  error?: string;
   timestamp: string;
-};
+}
 
 export type UserPosition = {
   id: string;
