@@ -1,10 +1,10 @@
-import aaveLogo from "@/assets/aave.png";
-import fluidLogo from "@/assets/fluid.png";
-import morphoLogo from "@/assets/morpho.png";
+import aaveLogo from "@/assets/aave.svg";
+import fluidLogo from "@/assets/fluid.svg";
+import morphoLogo from "@/assets/morpho.svg";
 
-import arbitrumLogo from "@/assets/arbitrum.png";
-import baseLogo from "@/assets/base.png";
-import optimismLogo from "@/assets/optimism.png";
+import arbitrumLogo from "@/assets/arbitrum.svg";
+import baseLogo from "@/assets/base.svg";
+import optimismLogo from "@/assets/optimism.svg";
 
 import { SupportedChainDomain, SupportedProtocol } from "@/types";
 import type { StaticImageData } from "next/image";

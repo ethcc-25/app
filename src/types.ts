@@ -69,3 +69,16 @@ export type Opportunity = {
   poolName: string;
   poolAddress: string;
 };
+
+export interface DepositRequest {
+  srcChainId: Opportunity["chainId"];
+  destChainId: Opportunity["chainId"];
+  userWallet: string;
+  amount: string;
+  opportunity: {
+    chainId: Opportunity["chainId"];
+    protocol: Opportunity["protocol"];
+    poolAddress: Opportunity["poolAddress"];
+  };
+  bridgeTransactionHash: string;
+}
