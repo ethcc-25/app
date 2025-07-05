@@ -26,25 +26,12 @@ export enum SupportedChainDomain {
   OPTIMISM = 2,
   ARBITRUM = 3,
   BASE = 6,
+  WORLDCHAIN = 14,
 }
 
 export type MondeToken = {
   symbol: string;
   name: string;
-};
-
-export type BestOpportunityData = {
-  protocol: string;
-  chain: string;
-  chainId: number;
-  apy: number;
-  poolApy: number;
-  rewardsApy: number;
-  tvl: number;
-  poolName: string;
-  poolAddress: string;
-  symbol: string;
-  tokens: MondeToken[];
 };
 
 export interface ApiResponse<T> {

@@ -2,37 +2,37 @@
 
 import { YIELD_MANAGERS } from "@/constants/contracts";
 import { useBestOpportunity } from "@/hooks/queries/useBestOpportunity";
+import { useInitializeDeposit } from "@/hooks/queries/useInitializeDeposit";
 import { ChainIdDomainMapping } from "@/utils/protocols";
 import { buildDepositTransaction } from "@/utils/transactions";
 
 import { Button, LiveFeedback } from "@worldcoin/mini-apps-ui-kit-react";
-import { MiniKit } from "@worldcoin/minikit-js";
+import { MiniKit, Tokens, tokenToDecimals } from "@worldcoin/minikit-js";
 import { useWaitForTransactionReceipt } from "@worldcoin/minikit-react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
 
 export const DepositButton = () => {
-  const usdcAmountToDeposit = 0.01;
+  const usdcAmountToDeposit = 0.005;
   const YIELD_MANAGER_ADDRESS = YIELD_MANAGERS[worldchain.id];
 
   const [buttonState, setButtonState] = useState<
     "pending" | "success" | "failed" | undefined
   >(undefined);
-  const [whichButton, setWhichButton] = useState<"getToken" | "usePermit2">(
-    "getToken"
-  );
   const [transactionId, setTransactionId] = useState<string>("");
+  const processedTransactionHashes = useRef<Set<string>>(new Set());
 
   const { data: session } = useSession();
   const userAddress = session?.user?.id;
 
-  const {
-    data: bestOpportunity,
-    isLoading,
-    error: bestOpportunityError,
-  } = useBestOpportunity(userAddress);
+  const { data: bestOpportunity } = useBestOpportunity(userAddress);
+
+  const initializeDeposit = useInitializeDeposit();
+
+  const dstChainId = bestOpportunity?.chainId || 0;
+  const dstYieldManager = YIELD_MANAGERS[dstChainId];
 
   const client = createPublicClient({
     chain: worldchain,
@@ -40,6 +40,7 @@ export const DepositButton = () => {
   });
 
   const {
+    transactionHash,
     isLoading: isConfirming,
     isSuccess: isConfirmed,
     isError,
@@ -47,10 +48,43 @@ export const DepositButton = () => {
   } = useWaitForTransactionReceipt({
     client: client,
     appConfig: {
-      app_id: process.env.NEXT_PUBLIC_APP_ID as `app_${string}`,
+      app_id: process.env.NEXT_PUBLIC_APP_ID!,
     },
     transactionId: transactionId,
   });
+
+  useEffect(() => {
+    if (
+      transactionHash &&
+      bestOpportunity &&
+      userAddress &&
+      !processedTransactionHashes.current.has(transactionHash)
+    ) {
+      processedTransactionHashes.current.add(transactionHash);
+
+      const depositRequest = {
+        srcChainId: worldchain.id,
+        destChainId: dstChainId,
+        userWallet: userAddress,
+        amount: tokenToDecimals(usdcAmountToDeposit, Tokens.USDC).toString(),
+        opportunity: {
+          chainId: bestOpportunity.chainId,
+          protocol: bestOpportunity.protocol,
+          poolAddress: bestOpportunity.poolAddress,
+        },
+        bridgeTransactionHash: transactionHash,
+      };
+
+      console.log("----> INITIALIZING DEPOSIT", depositRequest);
+      initializeDeposit.mutate(depositRequest, {});
+    }
+  }, [
+    transactionHash,
+    bestOpportunity,
+    userAddress,
+    dstChainId,
+    usdcAmountToDeposit,
+  ]);
 
   useEffect(() => {
     if (transactionId && !isConfirming) {
@@ -72,11 +106,7 @@ export const DepositButton = () => {
 
   const onClickUsePermit2 = async () => {
     setTransactionId("");
-    setWhichButton("usePermit2");
     setButtonState("pending");
-
-    const dstChainId = bestOpportunity?.chainId || 0;
-    const dstYieldManager = YIELD_MANAGERS[dstChainId];
 
     if (!dstYieldManager) {
       console.error("No yield manager found for chain id:", dstChainId);
@@ -124,7 +154,7 @@ export const DepositButton = () => {
           pending: "Transaction pending",
           success: "Transaction successful",
         }}
-        state={whichButton === "usePermit2" ? buttonState : undefined}
+        state={buttonState}
         className="w-full"
       >
         <Button
