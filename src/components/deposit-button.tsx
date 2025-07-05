@@ -1,7 +1,5 @@
 "use client";
 
-import FiatTokenV2ABI from "@/abi/FiatTokenV2_2.json";
-import TokenMessengerV2ABI from "@/abi/TokenMessengerV2.json";
 import YieldManagerABI from "@/abi/YieldManager.json";
 
 import type { ButtonState } from "@/types";
@@ -12,15 +10,9 @@ import { useEffect, useState } from "react";
 import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
 
-const TOKEN_MESSENGER_ADDRESS = "0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d";
+const YIELD_MANAGER_ADDRESS = "0x41516AC491E3bDab02Ac65bE1A553dE602518B93";
 const USDC_ADDRESS = "0x79A02482A880bCE3F13e09Da970dC34db4CD24d1";
 const DEPOSIT_AMOUNT = 1; // 1 USDC
-const DESTINATION_DOMAIN = 1;
-const MINT_RECIPIENT = "0xa13370EEc9697b93477B1e8Ea1707FCA226e09Fe";
-const DESTINATION_CALLER = "0x0000000000000000000000000000000000000000";
-const MAX_FEE = "99999";
-const MIN_FINALITY_THRESHOLD = 1000;
-const HOOK_DATA = "0x";
 const PERMIT_DURATION = 30 * 1000; // 30 seconds
 const RESET_DELAY = 3000; // 3 seconds
 
@@ -86,36 +78,8 @@ export const DepositButton = ({ userAddress }: DepositButtonProps) => {
         deadline: deadline,
       };
 
-      const permitTx = {
-        address: permitTransfer.permitted.token,
-        abi: FiatTokenV2ABI,
-        functionName: "permit",
-        args: [
-          userAddress,
-          TOKEN_MESSENGER_ADDRESS,
-          permitTransfer.permitted.amount,
-          deadline,
-          "PERMIT2_SIGNATURE_PLACEHOLDER_0",
-        ],
-      };
-      const depositTx = {
-        address: TOKEN_MESSENGER_ADDRESS,
-        abi: TokenMessengerV2ABI,
-        functionName: "depositForBurnWithHook",
-        args: [
-          permitTransfer.permitted.amount,
-          DESTINATION_DOMAIN,
-          MINT_RECIPIENT,
-          permitTransfer.permitted.token,
-          DESTINATION_CALLER,
-          MAX_FEE,
-          MIN_FINALITY_THRESHOLD,
-          HOOK_DATA,
-        ],
-      };
-
       const initDepositTx = {
-        address: "0x41516AC491E3bDab02Ac65bE1A553dE602518B93",
+        address: YIELD_MANAGER_ADDRESS,
         abi: YieldManagerABI,
         functionName: "initDeposit",
         args: [
@@ -133,7 +97,7 @@ export const DepositButton = ({ userAddress }: DepositButtonProps) => {
         permit2: [
           {
             ...permitTransfer,
-            spender: "0x41516AC491E3bDab02Ac65bE1A553dE602518B93",
+            spender: YIELD_MANAGER_ADDRESS,
           },
         ],
       });

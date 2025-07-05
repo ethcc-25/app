@@ -1,6 +1,7 @@
 "use client";
 
-import TestContractABI from "@/abi/TestContract.json";
+import YieldManagerABI from "@/abi/YieldManager.json";
+
 import { Button, LiveFeedback } from "@worldcoin/mini-apps-ui-kit-react";
 import { MiniKit } from "@worldcoin/minikit-js";
 import { useWaitForTransactionReceipt } from "@worldcoin/minikit-react";
@@ -8,18 +9,11 @@ import { useEffect, useState } from "react";
 import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
 
-/**
- * This component is used to get a token from a contract
- * For this to work you need to add the contract address to both contract entrypoints and permit2 tokens
- * inside of  Dev Portal > Configuration > Advanced
- * The general design pattern here is
- * 1. Trigger the transaction
- * 2. Update the transaction_id from the response to poll completion
- * 3. Wait in a useEffect for the transaction to complete
- */
-export const Transaction = () => {
+const YIELD_MANAGER_ADDRESS = "0xE54F28e6cC35b5D3d8697B2ccf0510157586fa6F";
+
+export const DepositButton2 = () => {
   // See the code for this contract here: https://worldscan.org/address/0xF0882554ee924278806d708396F1a7975b732522#code
-  const myContractToken = "0xF0882554ee924278806d708396F1a7975b732522";
+  const myContractToken = YIELD_MANAGER_ADDRESS;
   const [buttonState, setButtonState] = useState<
     "pending" | "success" | "failed" | undefined
   >(undefined);
@@ -67,48 +61,6 @@ export const Transaction = () => {
     }
   }, [isConfirmed, isConfirming, isError, error, transactionId]);
 
-  // This is a basic transaction call to mint a token
-  const onClickGetToken = async () => {
-    setTransactionId("");
-    setWhichButton("getToken");
-    setButtonState("pending");
-
-    try {
-      const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
-        transaction: [
-          {
-            address: myContractToken,
-            abi: TestContractABI,
-            functionName: "mintToken",
-            args: [],
-          },
-        ],
-      });
-
-      if (finalPayload.status === "success") {
-        console.log(
-          "Transaction submitted, waiting for confirmation:",
-          finalPayload.transaction_id
-        );
-        setTransactionId(finalPayload.transaction_id);
-      } else {
-        console.error("Transaction submission failed:", finalPayload);
-        setButtonState("failed");
-        setTimeout(() => {
-          setButtonState(undefined);
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Error sending transaction:", err);
-      setButtonState("failed");
-      setTimeout(() => {
-        setButtonState(undefined);
-      }, 3000);
-    }
-  };
-
-  // This is a basic transaction call to use Permit2 to spend the token you minted
-  // Make sure to call Mint Token first
   const onClickUsePermit2 = async () => {
     setTransactionId("");
     setWhichButton("usePermit2");
@@ -118,8 +70,8 @@ export const Transaction = () => {
     // Permit2 is valid for max 1 hour
     const permitTransfer = {
       permitted: {
-        token: myContractToken,
-        amount: (0.5 * 10 ** 18).toString(),
+        token: "0x79A02482A880bCE3F13e09Da970dC34db4CD24d1",
+        amount: (0.05 * 10 ** 6).toString(),
       },
       nonce: Date.now().toString(),
       deadline: Math.floor((Date.now() + 30 * 60 * 1000) / 1000).toString(),
@@ -127,7 +79,7 @@ export const Transaction = () => {
 
     const transferDetails = {
       to: address,
-      requestedAmount: (0.5 * 10 ** 18).toString(),
+      requestedAmount: (0.05 * 10 ** 6).toString(),
     };
 
     try {
@@ -135,7 +87,7 @@ export const Transaction = () => {
         transaction: [
           {
             address: myContractToken,
-            abi: TestContractABI,
+            abi: YieldManagerABI,
             functionName: "signatureTransfer",
             args: [
               [
@@ -177,26 +129,6 @@ export const Transaction = () => {
 
   return (
     <div className="grid w-full gap-4">
-      <p className="text-lg font-semibold">Transaction</p>
-      <LiveFeedback
-        label={{
-          failed: "Transaction failed",
-          pending: "Transaction pending",
-          success: "Transaction successful",
-        }}
-        state={whichButton === "getToken" ? buttonState : undefined}
-        className="w-full"
-      >
-        <Button
-          onClick={onClickGetToken}
-          disabled={buttonState === "pending"}
-          size="lg"
-          variant="primary"
-          className="w-full"
-        >
-          Get Token
-        </Button>
-      </LiveFeedback>
       <LiveFeedback
         label={{
           failed: "Transaction failed",
