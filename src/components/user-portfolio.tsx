@@ -7,7 +7,7 @@ export const UserPortfolio = () => {
   const currentApr = 0.123492792798272;
 
   return (
-    <div className="flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-blue-700/15 p-5 rounded-2xl aspect-[86/50]">
+    <div className="flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/20 via-blue-400/5 to-blue-700/20 p-5 rounded-2xl aspect-[86/50]">
       <div className="w-full">
         <Typography variant="number" level={2}>
           {formatNumber(totalUsd)}
