@@ -6,6 +6,10 @@ export type CustomTransaction = {
   type: "deposit" | "withdrawal";
   date: Date;
   status: "pending" | "success" | "failed";
+  srcTxHash?: string;
+  destTxHash?: string;
+  protocol: SupportedProtocol;
+  chainDomain: SupportedChainDomain;
 };
 
 export type FormattingOptions = {

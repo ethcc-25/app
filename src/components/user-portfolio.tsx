@@ -5,6 +5,7 @@ import { useUserProfile } from "@/hooks/queries/useUserProfile";
 import { formatNumber } from "@/utils/formatting";
 import { Typography } from "@worldcoin/mini-apps-ui-kit-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export const UserPortfolio = () => {
   const { data: session } = useSession();
@@ -25,7 +26,14 @@ export const UserPortfolio = () => {
   const generatedRewards = 1234.3456789;
 
   return (
-    <div className="flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/20 via-blue-400/5 to-blue-700/20 p-5 rounded-2xl aspect-[86/50]">
+    <div className="relative flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/20 via-blue-400/5 to-blue-700/20 p-5 rounded-2xl aspect-[86/50]">
+      <Image
+        src="/logo-coined.svg"
+        alt="Monde"
+        width={30}
+        height={30}
+        className="absolute top-5 right-5"
+      />
       <div className="w-full">
         <Typography variant="number" level={2}>
           {formatNumber(totalUsd)}

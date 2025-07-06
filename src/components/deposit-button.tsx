@@ -6,6 +6,7 @@ import { useInitializeDeposit } from "@/hooks/queries/useInitializeDeposit";
 import { ChainIdDomainMapping } from "@/utils/protocols";
 import { buildDepositTransaction } from "@/utils/transactions";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Button, LiveFeedback } from "@worldcoin/mini-apps-ui-kit-react";
 import { MiniKit, Tokens, tokenToDecimals } from "@worldcoin/minikit-js";
 import { useWaitForTransactionReceipt } from "@worldcoin/minikit-react";
@@ -26,6 +27,7 @@ export const DepositButton = () => {
 
   const { data: session } = useSession();
   const userAddress = session?.user?.id;
+  const queryClient = useQueryClient();
 
   const { data: bestOpportunity } = useBestOpportunity(userAddress);
 
@@ -79,6 +81,9 @@ export const DepositButton = () => {
       initializeDeposit.mutate(depositRequest, {
         onSuccess: () => {
           console.log("Deposit initialization completed!");
+          queryClient.invalidateQueries({
+            queryKey: ["user-profile", userAddress],
+          });
           setButtonState("success");
           setTimeout(() => {
             setButtonState(undefined);
@@ -99,6 +104,7 @@ export const DepositButton = () => {
     userAddress,
     dstChainId,
     usdcAmountToDeposit,
+    queryClient,
   ]);
 
   useEffect(() => {

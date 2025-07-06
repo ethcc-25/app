@@ -2,63 +2,14 @@
 
 import { useUserProfile } from "@/hooks/queries/useUserProfile";
 import { CustomTransaction } from "@/types";
-import { formatDate, formatNumber } from "@/utils/formatting";
-import { ListItem, Token } from "@worldcoin/mini-apps-ui-kit-react";
-import { CheckCircle, WarningCircle, XmarkCircle } from "iconoir-react";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
+import { TransactionListItem } from "./transactions-list-item";
 
 const mapStatus = (status: string): "pending" | "success" | "failed" => {
   if (status === "completed") return "success";
   if (status === "failed") return "failed";
   return "pending";
-};
-
-const transactionToListItem = (transaction: CustomTransaction) => {
-  const formattedAmount = formatNumber(transaction.amount);
-  const label =
-    transaction.type === "deposit"
-      ? `Deposited ${formattedAmount}`
-      : `Withdrew ${formattedAmount}`;
-
-  return (
-    <ListItem
-      key={transaction.id}
-      label={label}
-      description={formatDate(transaction.date)}
-      startAdornment={
-        <Token
-          value="USDC"
-          size={40}
-          disabled={transaction.type === "withdrawal"}
-        />
-      }
-      endAdornment={
-        transaction.status === "success" ? (
-          <CheckCircle
-            className="text-green-500"
-            strokeWidth={2}
-            width={20}
-            height={20}
-          />
-        ) : transaction.status === "failed" ? (
-          <XmarkCircle
-            className="text-red-500"
-            strokeWidth={2}
-            width={20}
-            height={20}
-          />
-        ) : (
-          <WarningCircle
-            className="text-yellow-500"
-            strokeWidth={2}
-            width={20}
-            height={20}
-          />
-        )
-      }
-    />
-  );
 };
 
 export const TransactionsList = () => {
@@ -76,6 +27,10 @@ export const TransactionsList = () => {
         type: "deposit" as const,
         date: new Date(deposit.createdAt),
         status: mapStatus(deposit.status),
+        srcTxHash: deposit.bridgeTransactionHash,
+        destTxHash: deposit.depositTxHash,
+        protocol: deposit.protocol,
+        chainDomain: deposit.dstChainDomain,
       })
     );
 
@@ -86,6 +41,10 @@ export const TransactionsList = () => {
         type: "withdrawal" as const,
         date: new Date(withdraw.createdAt),
         status: mapStatus(withdraw.status),
+        srcTxHash: withdraw.initWithdrawTxHash,
+        destTxHash: withdraw.processWithdrawTxHash,
+        protocol: withdraw.protocol,
+        chainDomain: withdraw.dstChainDomain,
       })
     );
 
@@ -100,9 +59,9 @@ export const TransactionsList = () => {
     return (
       <div className="w-full space-y-2">
         <div className="animate-pulse">
-          <div className="h-16 bg-gray-200 rounded-lg mb-2"></div>
-          <div className="h-16 bg-gray-200 rounded-lg mb-2"></div>
-          <div className="h-16 bg-gray-200 rounded-lg"></div>
+          <div className="h-16 bg-gray-200 rounded-2xl mb-2"></div>
+          <div className="h-16 bg-gray-200 rounded-2xl mb-2"></div>
+          <div className="h-16 bg-gray-200 rounded-2xl"></div>
         </div>
       </div>
     );
@@ -118,7 +77,9 @@ export const TransactionsList = () => {
 
   return (
     <div className="w-full space-y-2">
-      {transactions.map((transaction) => transactionToListItem(transaction))}
+      {transactions.map((transaction) => (
+        <TransactionListItem key={transaction.id} transaction={transaction} />
+      ))}
     </div>
   );
 };
