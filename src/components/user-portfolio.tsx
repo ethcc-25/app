@@ -1,6 +1,7 @@
 "use client";
 
 import { useBestOpportunity } from "@/hooks/queries/useBestOpportunity";
+import { useUserProfile } from "@/hooks/queries/useUserProfile";
 import { formatNumber } from "@/utils/formatting";
 import { Typography } from "@worldcoin/mini-apps-ui-kit-react";
 import { useSession } from "next-auth/react";
@@ -15,7 +16,12 @@ export const UserPortfolio = () => {
     error,
   } = useBestOpportunity(userAddress);
 
-  const totalUsd = 23456.27682782;
+  const { data: userProfile } = useUserProfile(userAddress);
+
+  const totalUsdWithDecimals = parseFloat(
+    userProfile?.summary.netAmount || "0"
+  );
+  const totalUsd = totalUsdWithDecimals / 10 ** 6;
   const generatedRewards = 1234.3456789;
 
   return (

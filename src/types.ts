@@ -5,6 +5,7 @@ export type CustomTransaction = {
   amount: number;
   type: "deposit" | "withdrawal";
   date: Date;
+  status: "pending" | "success" | "failed";
 };
 
 export type FormattingOptions = {
@@ -68,4 +69,70 @@ export interface DepositRequest {
     poolAddress: Opportunity["poolAddress"];
   };
   bridgeTransactionHash: string;
+}
+
+export interface Position {
+  pool: number;
+  positionId: string;
+  user: string;
+  amountUsdc: string;
+  shares: string;
+  vault: string;
+}
+
+export interface UserProfileDeposit {
+  id: string;
+  amount: string;
+  status: string;
+  srcChainDomain: number;
+  dstChainDomain: number;
+  srcChainName: string;
+  dstChainName: string;
+  protocol: number;
+  apy: number;
+  bridgeTransactionHash: string;
+  depositTxHash?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  errorMessage?: string;
+}
+
+export interface UserProfileWithdraw {
+  id: string;
+  amount: string;
+  status: string;
+  srcChainDomain: number;
+  dstChainDomain: number;
+  srcChainName: string;
+  dstChainName: string;
+  protocol: string;
+  initWithdrawTxHash?: string;
+  processWithdrawTxHash?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  errorMessage?: string;
+}
+
+export interface UserProfile {
+  userAddress: string;
+  activePosition: {
+    hasPosition: boolean;
+    position: Position | null;
+    chainDomain: number | null;
+    chainName: string | null;
+    protocolName: string | null;
+  };
+  deposits: UserProfileDeposit[];
+  withdraws: UserProfileWithdraw[];
+  summary: {
+    totalDeposited: string;
+    totalWithdrawn: string;
+    netAmount: string;
+    totalDeposits: number;
+    totalWithdraws: number;
+    completedDeposits: number;
+    completedWithdraws: number;
+    pendingDeposits: number;
+    pendingWithdraws: number;
+  };
 }
