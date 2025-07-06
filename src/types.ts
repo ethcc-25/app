@@ -109,7 +109,7 @@ export interface UserProfileWithdraw {
   dstChainDomain: number;
   srcChainName: string;
   dstChainName: string;
-  protocol: string;
+  protocol: number;
   initWithdrawTxHash?: string;
   processWithdrawTxHash?: string;
   createdAt: Date;

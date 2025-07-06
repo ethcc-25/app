@@ -44,7 +44,7 @@ export const TransactionsList = () => {
         srcTxHash: withdraw.initWithdrawTxHash,
         destTxHash: withdraw.processWithdrawTxHash,
         protocol: withdraw.protocol,
-        chainDomain: withdraw.dstChainDomain,
+        chainDomain: withdraw.srcChainDomain,
       })
     );
 

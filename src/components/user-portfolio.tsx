@@ -11,11 +11,7 @@ export const UserPortfolio = () => {
   const { data: session } = useSession();
   const userAddress = session?.user?.id;
 
-  const {
-    data: bestOpportunity,
-    isLoading,
-    error,
-  } = useBestOpportunity(userAddress);
+  const { data: bestOpportunity } = useBestOpportunity(userAddress);
 
   const { data: userProfile } = useUserProfile(userAddress);
 
@@ -23,7 +19,6 @@ export const UserPortfolio = () => {
     userProfile?.summary.netAmount || "0"
   );
   const totalUsd = totalUsdWithDecimals / 10 ** 6;
-  const generatedRewards = 1234.3456789;
 
   return (
     <div className="relative flex flex-col justify-between w-full bg-gradient-to-br from-blue-500/20 via-blue-400/5 to-blue-700/20 p-5 rounded-2xl aspect-[86/50]">
@@ -48,12 +43,9 @@ export const UserPortfolio = () => {
           </Typography>
         </div>
       </div>
-      <div className="flex justify-between gap-2 items-center mt-4">
-        <Typography variant="subtitle">Earnings</Typography>
-        <Typography variant="number" level={4} className="text-green-600">
-          +{formatNumber(generatedRewards)}
-        </Typography>
-      </div>
+      <h1 className="absolute bottom-5 right-5 uppercase text-lg !font-black font-urbanist bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text text-transparent drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] [text-shadow:_0_1px_0_rgba(255,255,255,0.7),_0_2px_1px_rgba(0,0,0,0.2)]">
+        {session?.user.username || "User.245"}
+      </h1>
     </div>
   );
 };
