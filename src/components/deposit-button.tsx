@@ -15,7 +15,7 @@ import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
 
 export const DepositButton = () => {
-  const usdcAmountToDeposit = 0.005;
+  const usdcAmountToDeposit = 0.1;
   const YIELD_MANAGER_ADDRESS = YIELD_MANAGERS[worldchain.id];
 
   const [buttonState, setButtonState] = useState<
@@ -76,7 +76,22 @@ export const DepositButton = () => {
       };
 
       console.log("----> INITIALIZING DEPOSIT", depositRequest);
-      initializeDeposit.mutate(depositRequest, {});
+      initializeDeposit.mutate(depositRequest, {
+        onSuccess: () => {
+          console.log("Deposit initialization completed!");
+          setButtonState("success");
+          setTimeout(() => {
+            setButtonState(undefined);
+          }, 3000);
+        },
+        onError: (error) => {
+          console.error("Deposit initialization failed:", error);
+          setButtonState("failed");
+          setTimeout(() => {
+            setButtonState(undefined);
+          }, 3000);
+        },
+      });
     }
   }, [
     transactionHash,
@@ -87,20 +102,12 @@ export const DepositButton = () => {
   ]);
 
   useEffect(() => {
-    if (transactionId && !isConfirming) {
-      if (isConfirmed) {
-        console.log("Transaction confirmed!");
-        setButtonState("success");
-        setTimeout(() => {
-          setButtonState(undefined);
-        }, 3000);
-      } else if (isError) {
-        console.error("Transaction failed:", error);
-        setButtonState("failed");
-        setTimeout(() => {
-          setButtonState(undefined);
-        }, 3000);
-      }
+    if (transactionId && !isConfirming && isError) {
+      console.error("Transaction failed:", error);
+      setButtonState("failed");
+      setTimeout(() => {
+        setButtonState(undefined);
+      }, 3000);
     }
   }, [isConfirmed, isConfirming, isError, error, transactionId]);
 
@@ -164,7 +171,7 @@ export const DepositButton = () => {
           variant="primary"
           fullWidth
         >
-          Deposit USD
+          Deposit {usdcAmountToDeposit} USD
         </Button>
       </LiveFeedback>
     </div>
